@@ -1,81 +1,81 @@
 
 # Go Quiz Program
 
-Este es un programa de cuestionario de línea de comandos escrito en Go. Lee preguntas y respuestas desde un archivo CSV, presenta cada pregunta al usuario y evalúa las respuestas basándose en su corrección dentro de un límite de tiempo especificado.
+This is a command-line quiz program written in Go. It reads questions and answers from a CSV file, presents each question to the user, and evaluates responses based on their correctness within a specified time limit.
 
-## Características
+## Features
 
-- **Entrada desde CSV**: Las preguntas y respuestas se leen desde un archivo CSV especificado por el usuario.
-- **Cuestionario con Temporizador**: El usuario puede establecer un límite de tiempo usando una bandera.
-- **Concurrencia con Goroutines y Canales**: El programa maneja de manera eficiente la entrada de datos dentro del límite de tiempo usando goroutines y canales.
-- **Calificación en Tiempo Real**: Muestra la puntuación del usuario al completar el cuestionario o cuando el tiempo se agota.
+- **CSV Input**: Questions and answers are read from a CSV file specified by the user.
+- **Timed Quiz**: The user can set a time limit using a flag.
+- **Concurrency with Goroutines and Channels**: The program efficiently handles data input within the time limit using goroutines and channels.
+- **Real-Time Scoring**: Displays the user's score upon quiz completion or when time runs out.
 
-## Uso
+## Usage
 
-1. Compila o ejecuta el programa directamente usando Go:
+1. Compile or run the program directly using Go:
    ```bash
    go run quiz.go -csv=yourfile.csv -limit=30
    ```
-   Reemplaza `yourfile.csv` con la ruta a tu archivo CSV, y `30` con el límite de tiempo deseado en segundos.
+   Replace `yourfile.csv` with the path to your CSV file, and `30` with the desired time limit in seconds.
 
-2. **Banderas de Línea de Comandos**:
-   - `-csv` (opcional): Ruta al archivo CSV que contiene preguntas y respuestas (por defecto es `problems.csv`).
-   - `-limit` (opcional): Límite de tiempo para el cuestionario en segundos (por defecto es `30` segundos).
+2. **Command-Line Flags**:
+   - `-csv` (optional): Path to the CSV file containing questions and answers (default is `problems.csv`).
+   - `-limit` (optional): Time limit for the quiz in seconds (default is `30` seconds).
 
-3. **Formato del Archivo CSV**: El archivo CSV debe tener las preguntas en la primera columna y las respuestas en la segunda, por ejemplo:
+3. **CSV File Format**: The CSV file should have questions in the first column and answers in the second, for example:
    ```csv
    question,answer
    5+5,10
    7-3,4
    ```
 
-## Paquetes Utilizados
+## Packages Used
 
-- **`flag`**: Permite gestionar argumentos de línea de comandos de forma sencilla y efectiva, lo que facilita el control sobre el archivo CSV de entrada y el límite de tiempo.
-- **`csv`**: Proporciona una forma sencilla de leer archivos CSV y estructurarlos en una lista de preguntas y respuestas, mediante métodos como `ReadAll`, que simplifica la conversión de datos estructurados.
-- **`time`**: Permite configurar un temporizador para establecer el límite de tiempo y gestionar las respuestas del usuario dentro de ese tiempo mediante el uso de `NewTimer` y `Timer.C`.
+- **`flag`**: Allows easy and effective handling of command-line arguments, making it simple to control the input CSV file and time limit.
+- **`csv`**: Provides a simple way to read CSV files and structure them into a list of questions and answers using methods like `ReadAll`, which simplifies structured data conversion.
+- **`time`**: Allows setting a timer to establish the time limit and manage user responses within that time using `NewTimer` and `Timer.C`.
 
-## Decisiones de Diseño
+## Design Decisions
 
-El programa incorpora varias decisiones de diseño para hacerlo modular, eficiente y fácil de usar:
+The program incorporates various design decisions to make it modular, efficient, and user-friendly:
 
-### 1. Manejo de Archivos con `defer file.Close()`
-   - El uso de `defer` asegura que el archivo CSV se cierra después de que se termine de leer, liberando recursos del sistema y previniendo fugas de memoria. Colocar `defer` inmediatamente después de abrir el archivo es una práctica común en Go para manejar recursos de manera segura.
+### 1. File Handling with `defer file.Close()`
+   - Using `defer` ensures that the CSV file closes after reading, freeing up system resources and preventing memory leaks. Placing `defer` immediately after opening the file is a common Go practice for safe resource handling.
 
-### 2. Concurrencia con Goroutines y Canales
-   - Utilizamos una goroutine para manejar la entrada del usuario de manera concurrente mientras el temporizador corre. Esto permite que el cuestionario finalice de inmediato cuando se alcanza el límite de tiempo, sin esperar a que el usuario responda.
-   - Un canal (`answerCh`) permite que la goroutine envíe la respuesta del usuario al proceso principal. El programa selecciona entre recibir la respuesta del canal o la señal del temporizador (`timer.C`), controlando de manera eficiente el flujo del cuestionario y la respuesta dentro del límite de tiempo.
+### 2. Concurrency with Goroutines and Channels
+   - A goroutine is used to handle user input concurrently while the timer runs. This allows the quiz to end immediately when the time limit is reached without waiting for the user’s response.
+   - A channel (`answerCh`) allows the goroutine to send the user’s response to the main process. The program selects between receiving the response from the channel or the timer signal (`timer.C`), efficiently controlling the quiz flow and response within the time limit.
 
-### 3. Modularidad y Función `askQuestions`
-   - La lógica de preguntas y respuestas se encapsula en una función `askQuestions`, mejorando la organización del código y facilitando futuras modificaciones, como agregar nuevas reglas de preguntas o configuraciones de puntaje. `main` ahora se enfoca únicamente en la configuración inicial, lectura de archivos, y llamada a funciones principales.
+### 3. Modularity and the `askQuestions` Function
+   - The question and answer logic is encapsulated in an `askQuestions` function, improving code organization and facilitating future modifications, like adding new question rules or scoring configurations. `main` now focuses solely on initial setup, file reading, and calling main functions.
 
-### 4. Validación y Saneamiento de Datos
-   - En la función `parseLines`, cada respuesta se procesa con `strings.TrimSpace` para asegurar que no haya espacios en blanco innecesarios que puedan afectar la comparación de respuestas.
+### 4. Data Validation and Sanitization
+   - In the `parseLines` function, each answer is processed with `strings.TrimSpace` to ensure there are no unnecessary spaces that could affect answer comparison.
 
-### 5. Función `exit` para Manejo de Errores
-   - La función `exit` centraliza los mensajes de error y la salida del programa, permitiendo una terminación limpia y consistente del programa en caso de error.
+### 5. `exit` Function for Error Handling
+   - The `exit` function centralizes error messages and program exit, allowing for a clean and consistent program termination in case of an error.
 
-## Estructura del Código
+## Code Structure
 
-- **`main`**: Inicializa las banderas, lee el archivo CSV y lanza el cuestionario.
-- **`askQuestions`**: Función principal que presenta cada pregunta al usuario y maneja la respuesta dentro del límite de tiempo.
-- **`parseLines`**: Convierte las líneas del archivo CSV en una estructura `problem`, simplificando la manipulación de preguntas y respuestas.
-- **`exit`**: Imprime un mensaje de error y termina el programa para asegurar un cierre seguro y controlado en caso de errores.
+- **`main`**: Initializes flags, reads the CSV file, and launches the quiz.
+- **`askQuestions`**: Main function that presents each question to the user and handles the response within the time limit.
+- **`parseLines`**: Converts CSV file lines into a `problem` structure, simplifying question and answer handling.
+- **`exit`**: Prints an error message and terminates the program to ensure safe and controlled shutdown in case of errors.
 
-## Ejemplo de Ejecución
+## Example Execution
 
 ```bash
 go run quiz.go -csv=problems.csv -limit=20
 ```
 
-Esto inicia un cuestionario utilizando `problems.csv` con un límite de tiempo de 20 segundos. El programa mostrará cada pregunta y pedirá una respuesta al usuario. Cuando se termine el tiempo o se respondan todas las preguntas, el programa muestra la puntuación final.
+This starts a quiz using `problems.csv` with a 20-second time limit. The program will display each question and ask the user for a response. When time runs out or all questions are answered, the program shows the final score.
 
-## Posibles Mejoras
+## Possible Improvements
 
-- **Sugerencias o Intentos Múltiples**: Para mejorar la interactividad educativa, se podrían agregar sugerencias o permitir múltiples intentos.
-- **Carga Dinámica de Preguntas**: Integrar una API o base de datos para cargar preguntas dinámicamente.
-- **Desglose de Puntuación**: Mostrar las respuestas correctas e incorrectas al final ayudaría al usuario a aprender de sus errores.
+- **Hints or Multiple Attempts**: To enhance educational interactivity, hints could be added, or multiple attempts could be allowed.
+- **Dynamic Question Loading**: Integrate an API or database to load questions dynamically.
+- **Score Breakdown**: Showing correct and incorrect answers at the end would help the user learn from their mistakes.
 
-## Licencia
+## License
 
-Este proyecto es de código abierto y está disponible bajo la licencia MIT.
+This project is open source and available under the MIT license.
