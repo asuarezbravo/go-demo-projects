@@ -11,6 +11,10 @@ This repository contains a collection of example projects and programs developed
 2. [URL Shortener](./url-shortener/README.md)
    - The **URL Shortener** is a program that redirects URLs based on mappings defined in both hardcoded paths and a YAML configuration. The program initializes an HTTP server, allowing users to configure redirects easily and includes a fallback multiplexer for unmapped paths. This project is ideal for practicing HTTP server handling, routing, and YAML configuration parsing in Go.
 
+3. [Deck Program](./deck-pkg/README.md)
+   - The **Deck Package** is a Go package for creating and managing a deck of playing cards. It includes functionalities for shuffling, sorting, filtering, and adding jokers, as well as creating multiple decks. This project is designed to help users learn about structuring code, functional options, and package-level encapsulation in Go.
+
+
 ## Installation and Running Projects
 
 Each project is independent and can be run separately. To run a specific project, navigate to its directory and install any necessary dependencies before running the program. Here is an example for the **Quiz Program**:
