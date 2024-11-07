@@ -62,7 +62,7 @@ The application includes design decisions aimed at improving modularity, readabi
 ## Example Execution
 
 ```bash
-go run blackjack.go
+go run main.go
 ```
 
 After starting the program, the player is prompted to either hit, stand, or quit. A round concludes when the player or dealer busts or when both have chosen to stand. The program displays the final score and the result (win, lose, or draw).
