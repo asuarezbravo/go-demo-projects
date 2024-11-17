@@ -1,6 +1,6 @@
 # Go Projects Repository
 
-This repository contains a collection of example projects and programs developed in the Go programming language. Each project has its own directory, detailed README, and modular code structure to facilitate understanding and learning specific Go concepts.
+This repository contains a collection of projects and programs developed in the Go programming language. Each project has its own directory, detailed README, and modular code structure to facilitate understanding and learning specific Go concepts.
 
 ## Projects
 
